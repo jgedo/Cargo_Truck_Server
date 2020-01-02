@@ -19,9 +19,11 @@ app.use(bodyParser.json());
 app.use(express.json({extended : false}));
 
 // Import Routes
-const postsRoute = require('./routes/posts');
+//const postsRoute = require('./routes/posts');
+const trailersRoute = require('./routes/trailers');
 
-app.use('/posts', postsRoute);
+//app.use('/posts', postsRoute);
+app.use('/api/trailers', trailersRoute);
 
 // Routes
 app.get('/', (req, res) => {
