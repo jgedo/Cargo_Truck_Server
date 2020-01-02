@@ -22,4 +22,6 @@ const TrailerSchema = mongoose.Schema({
     quantity: Number
 });
 
+//comment test for github push
+
 module.exports = mongoose.model('Trailers', TrailerSchema);
