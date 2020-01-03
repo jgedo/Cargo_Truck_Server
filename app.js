@@ -38,7 +38,7 @@ app.get('/testSnow', async (req, res) => {
             "manufacturer": "Big Tex Trailers",
             "price": 2685,
             "model": "70CH-18",
-            "capacity": 4881,
+            "capacity": "m",
             "dimension": 400,
             "condition": "new",
             "color": "grey",
