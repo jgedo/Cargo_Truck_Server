@@ -27,8 +27,8 @@ app.use('/api/trailers', trailersRoute);
 
 // Routes
 app.get('/', function(req, res) {
-    res.send('hello');
+    //res.send('hello');
 });
 
 // Listen
-app.listen(3000);
+app.listen(process.env.PORT || 3000);
