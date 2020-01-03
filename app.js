@@ -28,11 +28,27 @@ app.use('/api/trailers', trailersRoute);
 
 app.get('/testSnow', async (req, res) => {
     //const trailer = await Trailer.findById(req.params.id);
-    axios.post('https://dev85450.service-now.com/api/422579/testtrailer',{
-        manufacturer:"ddemo manufacturer",
-        model:"dnasjkdbn"
-    }, {
-        headers: { Authorization: "Basic cmVzdC50ZXN0aW5nOmFkbWluMTEx" }
+    axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [
+        {
+            "image": {
+                "contentType": "image/jpeg"
+            },
+            "_id": "5e0ea759ab30af3a489cc299",
+            "title": "Big Tex Hauler 70CH-18BKDT",
+            "manufacturer": "Big Tex Trailers",
+            "price": 2685,
+            "model": "70CH-18",
+            "capacity": 4881,
+            "dimension": 400,
+            "condition": "new",
+            "color": "grey",
+            "year": "2020",
+            "quantity": 1,
+            "__v": 0
+        }
+    ], {
+        headers: { Authorization: "Basic YWRtaW46UmV2QHR1cmUwMSE=",
+                   "Content-Type": "application/json" }
     })
     .then((res) => {
         res.json(res);
