@@ -22,7 +22,7 @@ const TrailerSchema = mongoose.Schema({
     },
 
     dimension: {
-        type: Number,
+        type: String,
         required: true
     },
 
