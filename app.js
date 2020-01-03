@@ -1,8 +1,11 @@
 const express = require('express');
 
 const app = express();
+const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const axios = require('axios');
+const cors = require('cors');
 require('dotenv/config');
 
 // Connect to database
@@ -23,12 +26,45 @@ app.use(express.json({extended : false}));
 const trailersRoute = require('./routes/trailers');
 
 //app.use('/posts', postsRoute);
+app.use(cors());
 app.use('/api/trailers', trailersRoute);
 
-// Routes
-app.get('/', (req, res) => {
-    res.send('We are on home');
+app.get('/testSnow', async (req, res) => {
+    //const trailer = await Trailer.findById(req.params.id);
+    axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [
+        {
+            "image": {
+                "contentType": "image/jpeg"
+            },
+            "_id": "5e0ea759ab30af3a489cc299",
+            "title": "Big Tex Hauler 70CH-18BKDT",
+            "manufacturer": "Big Tex Trailers",
+            "price": 2685,
+            "model": "70CH-18",
+            "capacity": 4881,
+            "dimension": "m",
+            "condition": "new",
+            "color": "grey",
+            "year": "2020",
+            "quantity": 1,
+            "__v": 0
+        }
+    ], {
+        headers: { Authorization: "Basic YWRtaW46UmV2QHR1cmUwMSE=",
+                   "Content-Type": "application/json" }
+    })
+    .then((res) => {
+        res.json(res);
+    })
+    .catch((error) => {
+        res.json(error);
+    });
 });
 
+// Routes
+/*app.get('/', (req, res) => {
+    res.send('We are on home');
+});*/
+
 // Listen
-app.listen(3000);
+app.listen(process.env.PORT || 3000);
