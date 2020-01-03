@@ -1,23 +1,28 @@
 const express = require('express');
 
 const app = express();
+const morgan = require('morgan');
+
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 require('dotenv/config');
 
 // Connect to database
-mongoose.connect(process.env.DB_CONNECTION, 
-    { useNewUrlParser: true, useUnifiedTopology: true }, 
+mongoose.connect(process.env.DB_CONNECTION,
+    { useNewUrlParser: true, useUnifiedTopology: true },
     (err) => {
         if (err) throw err;
         else console.log('connected to DB!');
     });
 
+//logs requests
+app.use(morgan('dev'));
+
 // Middlewares
 // Parses the body as a json object
 app.use(bodyParser.json());
-app.use(express.json({extended : false}));
+app.use(express.json({ extended: false }));
 
 // Import Routes
 //const postsRoute = require('./routes/posts');
@@ -28,18 +33,18 @@ app.use('/api/trailers', trailersRoute);
 
 app.get('/testSnow', async (req, res) => {
     //const trailer = await Trailer.findById(req.params.id);
-    axios.post('https://dev85450.service-now.com/api/422579/testtrailer',{
-        manufacturer:"ddemo manufacturer",
-        model:"dnasjkdbn"
+    axios.post('https://dev85450.service-now.com/api/422579/testtrailer', {
+        manufacturer: "ddemo manufacturer",
+        model: "dnasjkdbn"
     }, {
         headers: { Authorization: "Basic cmVzdC50ZXN0aW5nOmFkbWluMTEx" }
     })
-    .then((res) => {
-        res.json(res);
-    })
-    .catch((error) => {
-        res.json(error);
-    });
+        .then((res) => {
+            res.json(res);
+        })
+        .catch((error) => {
+            res.json(error);
+        });
 });
 
 // Routes
