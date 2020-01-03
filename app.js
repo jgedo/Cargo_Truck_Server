@@ -26,8 +26,8 @@ const trailersRoute = require('./routes/trailers');
 app.use('/api/trailers', trailersRoute);
 
 // Routes
-app.get('/', (req, res) => {
-    res.send('We are on home');
+app.get('/', function(req, res) {
+    res.send('hello');
 });
 
 // Listen
