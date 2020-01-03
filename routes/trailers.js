@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
         quantity: req.body.quantity
     });
 
-    trailer.image.data = fs.readFileSync(imgPathTest);
+    //trailer.image.data = fs.readFileSync(imgPathTest);
     trailer.image.contentType = 'image/png';
 
     try {
