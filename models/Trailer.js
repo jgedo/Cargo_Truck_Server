@@ -16,6 +16,21 @@ const TrailerSchema = mongoose.Schema({
         contentType: String
     },
 
+    color: {
+        type: String,
+        required: true
+    },
+
+    dimension: {
+        type: Number,
+        required: true
+    },
+
+    price: {
+        type: Number,
+        required: true
+    },
+
     capacity: Number,
     condition: String,
     year: String,
