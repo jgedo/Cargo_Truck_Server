@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const axios = require('axios');
+const cors = require('cors');
 require('dotenv/config');
 
 // Connect to database
@@ -25,6 +26,7 @@ app.use(express.json({extended : false}));
 const trailersRoute = require('./routes/trailers');
 
 //app.use('/posts', postsRoute);
+app.use(cors());
 app.use('/api/trailers', trailersRoute);
 
 app.get('/testSnow', async (req, res) => {
