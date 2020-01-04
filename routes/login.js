@@ -7,22 +7,21 @@ const User = require('../models/User');
 
 const imgPathTest = './images/test.png';
 
-router.post("/login", function (res, req) {
+router.post("/", async (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
-
-    User.findOne({ username: username, password: password }, function (err, user) {
-        if (err) {
-            console.log(err);
-            return res.status(500).send();
+    
+    try {
+        const loggedUser = await User.findOne({username: username, password: password });
+        if (!loggedUser) {
+            res.status(401);
+            res.json({message: "Not Authorized"});
+        } else {
+            res.json(loggedUser);
         }
-
-        if (!user) {
-            return res.status(404).send();
-        }
-
-        return res.status(200).send();
-    });
+    } catch (err) {
+        res.json({ message: err });
+    };
 });
 
 module.exports = router;
