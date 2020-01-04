@@ -48,15 +48,16 @@ router.post('/', async (req, res) => {
         //image: req.body.image,
     });
 
-    //trailer.image.data = fs.readFileSync(imgPathTest);
-    trailer.image.contentType = 'image/png';
+    trailer.image.data = Buffer.from(req.body.image.data.split(',')[1], 'base64');
+    trailer.image.contentType = req.body.image.contentType;
 
     try {
         const savedTrailer = await trailer.save();
         axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [
             {
                 "image": {
-                    "contentType": "image/jpeg"
+                    "data": req.body.image.data.split(',')[1],
+                    "contentType": req.body.image.contentType,
                 },
                 "_id": savedTrailer._id,
                 "title": req.body.title,
@@ -90,7 +91,7 @@ router.post('/', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        const removedTrailer = await Trailer.deleteOne({ _id: req.params.id })
+        const removedTrailer = await Trailer.deleteOne({ _id: req.params.id });
         res.json(removedTrailer);
     } catch (err) {
         res.json({ message: err });
@@ -112,15 +113,19 @@ router.put('/:id', async (req, res) => {
                     condition: req.body.condition,
                     color: req.body.color,
                     year: req.body.year,
-                    quantity: req.body.quantity
-                    //image: req.body.image
+                    quantity: req.body.quantity,
+                    image: {
+                        data: req.body.image.data.split(',')[1],
+                        contentType: req.body.image.contentType,
+                    },
                 }
             }
         );
         axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [
             {
                 "image": {
-                    "contentType": "image/jpeg"
+                    "data": req.body.image.data.split(',')[1],
+                    "contentType": req.body.image.contentType,
                 },
                 "_id": savedTrailer._id,
                 "title": req.body.title,
