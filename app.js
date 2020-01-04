@@ -25,11 +25,13 @@ app.use(express.json({ extended: false }));
 //const postsRoute = require('./routes/posts');
 const trailersRoute = require('./routes/trailers');
 const usersRoute = require('./routes/users');
+const loginRoute = require('./routes/login');
 
 //app.use('/posts', postsRoute);
 app.use(cors());
 app.use('/api/trailers', trailersRoute);
 app.use('/api/users', usersRoute);
+app.use('/api/login', loginRoute);
 
 app.get('/testSnow', async (req, res) => {
     //const trailer = await Trailer.findById(req.params.id);
