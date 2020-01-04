@@ -4,6 +4,7 @@ const router = express.Router();
 const fs = require('fs');
 
 const Trailer = require('../models/Trailer');
+const axios = require('axios');
 
 const imgPathTest = './images/test.png';
 
@@ -32,8 +33,6 @@ router.get('/:id', async (req, res) => {
     };
 });
 
-
-// test comment by Raghav
 router.post('/', async (req, res) => {
     let trailer = new Trailer({
         title: req.body.title,
@@ -54,7 +53,36 @@ router.post('/', async (req, res) => {
 
     try {
         const savedTrailer = await trailer.save();
-        res.json(savedTrailer);
+        axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [
+            {
+                "image": {
+                    "contentType": "image/jpeg"
+                },
+                "_id": savedTrailer._id,
+                "title": req.body.title,
+                "manufacturer": req.body.manufacturer,
+                "price": req.body.price,
+                "model": req.body.model,
+                "capacity": req.body.capacity,
+                "dimension": req.body.dimension,
+                "condition": req.body.condition,
+                "color": req.body.color,
+                "year": req.body.year,
+                "quantity": req.body.quantity,
+                "__v": 0
+            }
+        ], {
+            headers: {
+                Authorization: "Basic " +  process.env.AUTH_DATA,
+                "Content-Type": "application/json"
+            }
+        })
+            .then((res) => {
+                res.json(savedTrailer);
+            })
+            .catch((error) => {
+                res.json(error);
+            });
     } catch (err) {
         res.json({ message: err });
     };
@@ -89,7 +117,36 @@ router.put('/:id', async (req, res) => {
                 }
             }
         );
-        res.json(updatePost);
+        axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [
+            {
+                "image": {
+                    "contentType": "image/jpeg"
+                },
+                "_id": savedTrailer._id,
+                "title": req.body.title,
+                "manufacturer": req.body.manufacturer,
+                "price": req.body.price,
+                "model": req.body.model,
+                "capacity": req.body.capacity,
+                "dimension": req.body.dimension,
+                "condition": req.body.condition,
+                "color": req.body.color,
+                "year": req.body.year,
+                "quantity": req.body.quantity,
+                "__v": 0
+            }
+        ], {
+            headers: {
+                Authorization: "Basic " +  process.env.AUTH_DATA,
+                "Content-Type": "application/json"
+            }
+        })
+            .then((res) => {
+                res.json(updatePost);
+            })
+            .catch((error) => {
+                res.json(error);
+            });
     } catch (err) {
         res.json({ message: err });
     };
