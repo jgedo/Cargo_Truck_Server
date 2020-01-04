@@ -9,8 +9,8 @@ const cors = require('cors');
 require('dotenv/config');
 
 // Connect to database
-mongoose.connect(process.env.DB_CONNECTION, 
-    { useNewUrlParser: true, useUnifiedTopology: true }, 
+mongoose.connect(process.env.DB_CONNECTION,
+    { useNewUrlParser: true, useUnifiedTopology: true },
     (err) => {
         if (err) throw err;
         else console.log('connected to DB!');
@@ -19,15 +19,19 @@ mongoose.connect(process.env.DB_CONNECTION,
 // Middlewares
 // Parses the body as a json object
 app.use(bodyParser.json());
-app.use(express.json({extended : false}));
+app.use(express.json({ extended: false }));
 
 // Import Routes
 //const postsRoute = require('./routes/posts');
 const trailersRoute = require('./routes/trailers');
+const usersRoute = require('./routes/users');
+const loginRoute = require('./routes/login');
 
 //app.use('/posts', postsRoute);
 app.use(cors());
 app.use('/api/trailers', trailersRoute);
+app.use('/api/users', usersRoute);
+app.use('/api/login', loginRoute);
 
 app.get('/testSnow', async (req, res) => {
     //const trailer = await Trailer.findById(req.params.id);
@@ -50,15 +54,17 @@ app.get('/testSnow', async (req, res) => {
             "__v": 0
         }
     ], {
-        headers: { Authorization: "Basic YWRtaW46UmV2QHR1cmUwMSE=",
-                   "Content-Type": "application/json" }
+        headers: {
+            Authorization: "Basic YWRtaW46UmV2QHR1cmUwMSE=",
+            "Content-Type": "application/json"
+        }
     })
-    .then((res) => {
-        res.json(res);
-    })
-    .catch((error) => {
-        res.json(error);
-    });
+        .then((res) => {
+            res.json(res);
+        })
+        .catch((error) => {
+            res.json(error);
+        });
 });
 
 // Routes
