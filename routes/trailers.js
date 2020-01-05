@@ -45,9 +45,14 @@ router.post('/', async (req, res) => {
         color: req.body.color,
         year: req.body.year,
         quantity: req.body.quantity
-        //image: req.body.image,
     });
 
+    //The expected incoming content from the request is:
+    //    "data:image/png;base64,<very long string>"
+    //This part will need to be changed if it's cropped down to the <humongous string> part, which might be better anyways.
+    //
+    //If we used data from the database instead of forwarding REST data to SN, we'd need to use:
+    //    trailer.image.data.toString('base64')
     trailer.image.data = Buffer.from(req.body.image.data.split(',')[1], 'base64');
     trailer.image.contentType = req.body.image.contentType;
 
