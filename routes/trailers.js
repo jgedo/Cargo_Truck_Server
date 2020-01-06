@@ -45,18 +45,24 @@ router.post('/', async (req, res) => {
         color: req.body.color,
         year: req.body.year,
         quantity: req.body.quantity
-        //image: req.body.image,
     });
 
-    //trailer.image.data = fs.readFileSync(imgPathTest);
-    trailer.image.contentType = 'image/png';
+    //The expected incoming content from the request is:
+    //    "data:image/png;base64,<very long string>"
+    //This part will need to be changed if it's cropped down to the <humongous string> part, which might be better anyways.
+    //
+    //If we used data from the database instead of forwarding REST data to SN, we'd need to use:
+    //    trailer.image.data.toString('base64')
+    trailer.image.data = Buffer.from(req.body.image.data.split(',')[1], 'base64');
+    trailer.image.contentType = req.body.image.contentType;
 
     try {
         const savedTrailer = await trailer.save();
         axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [
             {
                 "image": {
-                    "contentType": "image/jpeg"
+                    "data": req.body.image.data.split(',')[1],
+                    "contentType": req.body.image.contentType,
                 },
                 "_id": savedTrailer._id,
                 "title": req.body.title,
@@ -90,7 +96,7 @@ router.post('/', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        const removedTrailer = await Trailer.deleteOne({ _id: req.params.id })
+        const removedTrailer = await Trailer.deleteOne({ _id: req.params.id });
         res.json(removedTrailer);
     } catch (err) {
         res.json({ message: err });
@@ -112,15 +118,19 @@ router.put('/:id', async (req, res) => {
                     condition: req.body.condition,
                     color: req.body.color,
                     year: req.body.year,
-                    quantity: req.body.quantity
-                    //image: req.body.image
+                    quantity: req.body.quantity,
+                    image: {
+                        data: req.body.image.data.split(',')[1],
+                        contentType: req.body.image.contentType,
+                    },
                 }
             }
         );
         axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [
             {
                 "image": {
-                    "contentType": "image/jpeg"
+                    "data": req.body.image.data.split(',')[1],
+                    "contentType": req.body.image.contentType,
                 },
                 "_id": savedTrailer._id,
                 "title": req.body.title,
