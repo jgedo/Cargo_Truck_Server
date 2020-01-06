@@ -26,6 +26,7 @@ app.use(express.json({ extended: false }));
 const trailersRoute = require('./routes/trailers');
 const usersRoute = require('./routes/users');
 const loginRoute = require('./routes/login');
+/*
 const Trailer = require('./models/Trailer');
 
 //app.use('/posts', postsRoute);
@@ -74,11 +75,7 @@ app.get('/testSnow', async (req, res) => {
             res.json(error);
         });
 });
-
-// Routes
-/*app.get('/', (req, res) => {
-    res.send('We are on home');
-});*/
+*/
 
 // Listen
 app.listen(process.env.PORT || 3000);
