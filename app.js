@@ -26,6 +26,7 @@ app.use(express.json({ extended: false }));
 const trailersRoute = require('./routes/trailers');
 const usersRoute = require('./routes/users');
 const loginRoute = require('./routes/login');
+const Trailer = require('./models/Trailer');
 
 //app.use('/posts', postsRoute);
 app.use(cors());
@@ -33,27 +34,34 @@ app.use('/api/trailers', trailersRoute);
 app.use('/api/users', usersRoute);
 app.use('/api/login', loginRoute);
 
+function trailerToMsg(trailer) {
+    let msgTrailer = {};
+    
+    if(trailer.image && trailer.image.data) {
+        msgTrailer.image = {
+            contentType: trailer.image.contentType,
+            data: trailer.image.data.toString('base64'),
+        };
+    }
+
+    msgTrailer._id = trailer._id;
+    msgTrailer.title = trailer.title;
+    msgTrailer.manufacturer = trailer.manufacturer;
+    msgTrailer.price = trailer.price;
+    msgTrailer.model = trailer.model;
+    msgTrailer.capacity = trailer.capacity;
+    msgTrailer.dimension = trailer.dimension;
+    msgTrailer.condition = trailer.condition;
+    msgTrailer.color = trailer.color;
+    msgTrailer.year = trailer.year;
+    msgTrailer.quantity = trailer.quantity;
+
+    return msgTrailer;
+}
+
 app.get('/testSnow', async (req, res) => {
-    //const trailer = await Trailer.findById(req.params.id);
-    axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [
-        {
-            "image": {
-                "contentType": "image/jpeg"
-            },
-            "_id": "5e0ea759ab30af3a489cc299",
-            "title": "Big Tex Hauler 70CH-18BKDT",
-            "manufacturer": "Big Tex Trailers",
-            "price": 2685,
-            "model": "70CH-18",
-            "capacity": 4881,
-            "dimension": "30x20x10",
-            "condition": "New",
-            "color": "grey",
-            "year": "2020",
-            "quantity": 1,
-            "__v": 0
-        }
-    ], {
+    const trailer = await Trailer.findById("5e126f73671145b0968be3f7");
+    axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [trailerToMsg(trailer)], {
         headers: {
             Authorization: "Basic YWRtaW46UmV2QHR1cmUwMSE=",
             "Content-Type": "application/json"

@@ -17,8 +17,9 @@ const imgPathTest = './images/test.png';
 
 router.get('/', async (req, res) => {
     try {
-        const trailers = await Trailer.find();
-        res.json(trailers);
+        const trailers = await Trailer.find();        
+        res.json(trailers.map(trailerToMsg));
+        
     } catch (err) {
         res.json({ message: err });
     };
@@ -27,11 +28,36 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const trailer = await Trailer.findById(req.params.id);
-        res.json(trailer);
+        res.json(trailerToMsg(trailer));
     } catch (err) {
         res.json({ message: err });
     };
 });
+
+function trailerToMsg(trailer) {
+    let msgTrailer = {};
+    
+    if(trailer.image && trailer.image.data) {
+        msgTrailer.image = {
+            contentType: trailer.image.contentType,
+            data: trailer.image.data.toString('base64'),
+        };
+    }
+
+    msgTrailer._id = trailer._id;
+    msgTrailer.title = trailer.title;
+    msgTrailer.manufacturer = trailer.manufacturer;
+    msgTrailer.price = trailer.price;
+    msgTrailer.model = trailer.model;
+    msgTrailer.capacity = trailer.capacity;
+    msgTrailer.dimension = trailer.dimension;
+    msgTrailer.condition = trailer.condition;
+    msgTrailer.color = trailer.color;
+    msgTrailer.year = trailer.year;
+    msgTrailer.quantity = trailer.quantity;
+
+    return msgTrailer;
+}
 
 router.post('/', async (req, res) => {
     let trailer = new Trailer({
