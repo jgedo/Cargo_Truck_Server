@@ -79,8 +79,13 @@ router.post('/', async (req, res) => {
     //
     //If we used data from the database instead of forwarding REST data to SN, we'd need to use:
     //    trailer.image.data.toString('base64')
-    trailer.image.data = Buffer.from(req.body.image.data.split(',')[1], 'base64');
-    trailer.image.contentType = req.body.image.contentType;
+    if (req.body.image) {
+        trailer.image.data = Buffer.from(req.body.image.data.split(',')[1], 'base64');
+        trailer.image.contentType = req.body.image.contentType;
+    } else {
+        trailer.image.data = "";
+        trailer.image.contentType = "";
+    }
 
     try {
         const savedTrailer = await trailer.save();
@@ -131,44 +136,51 @@ router.delete('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
+        let updateBody = {
+            title: req.body.title,
+            manufacturer: req.body.manufacturer,
+            price: req.body.price,
+            model: req.body.model,
+            capacity: req.body.capacity,
+            dimension: req.body.dimension,
+            condition: req.body.condition,
+            color: req.body.color,
+            year: req.body.year,
+            quantity: req.body.quantity,
+            image: {
+                data: "",
+                contentType: "",
+            },
+        };
+
+        if (req.body.image) {
+            updateBody.image.data = Buffer.from(req.body.image.data.split(',')[1], 'base64');
+            updateBody.image.contentType = req.body.image.contentType;
+        }
+
         const updatePost = await Trailer.updateOne(
             { _id: req.params.id },
             {
-                $set: {
-                    title: req.body.title,
-                    manufacturer: req.body.manufacturer,
-                    price: req.body.price,
-                    model: req.body.model,
-                    capacity: req.body.capacity,
-                    dimension: req.body.dimension,
-                    condition: req.body.condition,
-                    color: req.body.color,
-                    year: req.body.year,
-                    quantity: req.body.quantity,
-                    image: {
-                        data: req.body.image.data.split(',')[1],
-                        contentType: req.body.image.contentType,
-                    },
-                }
+                $set: updateBody
             }
         );
         axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [
             {
                 "image": {
-                    "data": req.body.image.data.split(',')[1],
-                    "contentType": req.body.image.contentType,
+                    "data": updateBody.image.data.split(',')[1],
+                    "contentType": updateBody.image.contentType,
                 },
-                "_id": savedTrailer._id,
-                "title": req.body.title,
-                "manufacturer": req.body.manufacturer,
-                "price": req.body.price,
-                "model": req.body.model,
-                "capacity": req.body.capacity,
-                "dimension": req.body.dimension,
-                "condition": req.body.condition,
-                "color": req.body.color,
-                "year": req.body.year,
-                "quantity": req.body.quantity,
+                "_id": req.params.id,
+                "title": updateBody.title,
+                "manufacturer": updateBody.manufacturer,
+                "price": updateBody.price,
+                "model": updateBody.model,
+                "capacity": updateBody.capacity,
+                "dimension": updateBody.dimension,
+                "condition": updateBody.condition,
+                "color": updateBody.color,
+                "year": updateBody.year,
+                "quantity": updateBody.quantity,
                 "__v": 0
             }
         ], {
