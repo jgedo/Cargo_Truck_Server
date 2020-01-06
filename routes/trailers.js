@@ -110,7 +110,7 @@ router.post('/', async (req, res) => {
             }
         })
             .then((res) => {
-                res.json(savedTrailer);
+                res.json(trailerToMsg(savedTrailer));
             })
             .catch((error) => {
                 res.json(error);
