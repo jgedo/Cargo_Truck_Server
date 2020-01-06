@@ -79,17 +79,20 @@ router.post('/', async (req, res) => {
     //
     //If we used data from the database instead of forwarding REST data to SN, we'd need to use:
     //    trailer.image.data.toString('base64')
-    trailer.image.data = Buffer.from(req.body.image.data.split(',')[1], 'base64');
-    trailer.image.contentType = req.body.image.contentType;
+    let hasImage = req.body.image && req.body.image.data || false;
+    if(hasImage) {
+        trailer.image.data = Buffer.from(req.body.image.data.split(',')[1], 'base64');
+        trailer.image.contentType = req.body.image.contentType;
+    }
 
     try {
         const savedTrailer = await trailer.save();
         axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [
             {
-                "image": {
+                "image": hasImage ? {
                     "data": req.body.image.data.split(',')[1],
                     "contentType": req.body.image.contentType,
-                },
+                } : {},
                 "_id": savedTrailer._id,
                 "title": req.body.title,
                 "manufacturer": req.body.manufacturer,
@@ -131,6 +134,7 @@ router.delete('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
+        let hasImage = req.body.image && req.body.image.data || false;
         const updatePost = await Trailer.updateOne(
             { _id: req.params.id },
             {
@@ -145,19 +149,19 @@ router.put('/:id', async (req, res) => {
                     color: req.body.color,
                     year: req.body.year,
                     quantity: req.body.quantity,
-                    image: {
+                    image: hasImage ? {
                         data: req.body.image.data.split(',')[1],
                         contentType: req.body.image.contentType,
-                    },
+                    } : {},
                 }
             }
         );
         axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [
             {
-                "image": {
+                "image": hasImage ? {
                     "data": req.body.image.data.split(',')[1],
                     "contentType": req.body.image.contentType,
-                },
+                } : {},
                 "_id": savedTrailer._id,
                 "title": req.body.title,
                 "manufacturer": req.body.manufacturer,
