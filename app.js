@@ -26,14 +26,15 @@ app.use(express.json({ extended: false }));
 const trailersRoute = require('./routes/trailers');
 const usersRoute = require('./routes/users');
 const loginRoute = require('./routes/login');
-/*
-const Trailer = require('./models/Trailer');
 
 //app.use('/posts', postsRoute);
 app.use(cors());
 app.use('/api/trailers', trailersRoute);
 app.use('/api/users', usersRoute);
 app.use('/api/login', loginRoute);
+
+/*
+const Trailer = require('./models/Trailer');
 
 function trailerToMsg(trailer) {
     let msgTrailer = {};
