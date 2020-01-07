@@ -79,14 +79,15 @@ router.post('/', async (req, res) => {
     //
     //If we used data from the database instead of forwarding REST data to SN, we'd need to use:
     //    trailer.image.data.toString('base64')
+
     if (req.body.image) {
-        trailer.image.data = Buffer.from(req.body.image.data.split(',')[1], 'base64');
-        trailer.image.contentType = req.body.image.contentType;
+        trailer.image.data = Buffer.from(req.body.image.split(',')[1], 'base64');
+        trailer.image.contentType = req.body.image.split(',')[0].split('data:')[1];
     } else {
         trailer.image.data = "";
         trailer.image.contentType = "";
     }
-
+    
     try {
         const savedTrailer = await trailer.save();
         axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [
@@ -123,6 +124,7 @@ router.post('/', async (req, res) => {
     } catch (err) {
         res.json({ message: err });
     };
+    
 });
 
 router.delete('/:id', async (req, res) => {
