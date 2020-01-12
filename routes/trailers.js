@@ -90,7 +90,7 @@ router.post('/', async (req, res) => {
     
     try {
         const savedTrailer = await trailer.save();
-        axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [
+        axios.post('https://dev57091.service-now.com/api/440171/incoming_trailer', [
             {
                 "image": {
                     "data": req.body.image.split(',')[1],
@@ -166,7 +166,7 @@ router.put('/:id', async (req, res) => {
                 $set: updateBody
             }
         );
-        axios.post('https://dev91990.service-now.com/api/440171/incoming_trailer', [
+        axios.post('https://dev57091.service-now.com/api/440171/incoming_trailer', [
             {
                 "image": {
                     "data": updateBody.image.data.split(',')[1],
