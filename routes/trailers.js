@@ -148,17 +148,8 @@ router.put('/:id', async (req, res) => {
             condition: req.body.condition,
             color: req.body.color,
             year: req.body.year,
-            quantity: req.body.quantity,
-            image: {
-                data: "",
-                contentType: "",
-            },
+            quantity: req.body.quantity
         };
-
-        if (req.body.image) {
-            updateBody.image.data = Buffer.from(req.body.image.split(',')[1], 'base64');
-            updateBody.image.contentType = req.body.image.split(',')[0].split('data:')[1];
-        }
 
         const updatePost = await Trailer.updateOne(
             { _id: req.params.id },
@@ -168,10 +159,6 @@ router.put('/:id', async (req, res) => {
         );
         axios.post('https://dev57091.service-now.com/api/440171/incoming_trailer', [
             {
-                "image": {
-                    "data": updateBody.image.data.split(',')[1],
-                    "contentType": updateBody.image.contentType,
-                },
                 "_id": req.params.id,
                 "title": updateBody.title,
                 "manufacturer": updateBody.manufacturer,
