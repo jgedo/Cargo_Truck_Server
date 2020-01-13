@@ -156,8 +156,9 @@ router.put('/:id', async (req, res) => {
             }
         };
 
-        if (req.body.image) {
+        if (req.body.image && req.body.image != "") {
             console.log("has image");
+            console.log("Image: " + req.body.image);
             updateBody.image.data = Buffer.from(req.body.image.split(',')[1], 'base64');
             updateBody.image.contentType = req.body.image.split(',')[0].split('data:')[1];
         }
