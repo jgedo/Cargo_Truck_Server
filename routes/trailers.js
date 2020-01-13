@@ -151,16 +151,16 @@ router.put('/:id', async (req, res) => {
             year: req.body.year,
             quantity: req.body.quantity,
             image: {
-                data:trailer.image.data,
-                contentType:trailer.image.contentType
+                data: trailer.image.data,
+                contentType: trailer.image.contentType
             }
         };
 
+        let imageChanged = false;
         if (req.body.image && req.body.image != "") {
-            console.log("has image");
-            console.log("Image: " + req.body.image);
             updateBody.image.data = Buffer.from(req.body.image.split(',')[1], 'base64');
             updateBody.image.contentType = req.body.image.split(',')[0].split('data:')[1];
+            imageChanged = true;
         }
 
         const updatePost = await Trailer.updateOne(
@@ -169,12 +169,12 @@ router.put('/:id', async (req, res) => {
                 $set: updateBody
             }
         );
-        
-        axios.post('https://dev57091.service-now.com/api/440171/incoming_trailer', [
-            {
+        let data;
+        if (imageChanged) {
+            data = {
                 "image": {
-                    "data": updateBody.image.data,
-                    "contentType": updateBody.image.contentType,
+                    "data": req.body.image.split(',')[1],
+                    "contentType": trailer.image.contentType.split(';')[0],
                 },
                 "_id": req.params.id,
                 "title": updateBody.title,
@@ -189,7 +189,23 @@ router.put('/:id', async (req, res) => {
                 "quantity": updateBody.quantity,
                 "__v": 0
             }
-        ], {
+        } else {
+            data = {
+                "_id": req.params.id,
+                "title": updateBody.title,
+                "manufacturer": updateBody.manufacturer,
+                "price": updateBody.price,
+                "model": updateBody.model,
+                "capacity": updateBody.capacity,
+                "dimension": updateBody.dimension,
+                "condition": updateBody.condition,
+                "color": updateBody.color,
+                "year": updateBody.year,
+                "quantity": updateBody.quantity,
+                "__v": 0
+            }
+        }
+        axios.post('https://dev57091.service-now.com/api/440171/incoming_trailer', [data], {
             headers: {
                 Authorization: "Basic " +  process.env.AUTH_DATA,
                 "Content-Type": "application/json"
@@ -202,6 +218,7 @@ router.put('/:id', async (req, res) => {
                 res.json(error);
             });
     } catch (err) {
+        console.log(err);
         res.json({ message: err });
     };
 });
