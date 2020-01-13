@@ -138,6 +138,7 @@ router.delete('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
+        const trailer = await Trailer.findById(req.params.id);
         let updateBody = {
             title: req.body.title,
             manufacturer: req.body.manufacturer,
@@ -148,11 +149,15 @@ router.put('/:id', async (req, res) => {
             condition: req.body.condition,
             color: req.body.color,
             year: req.body.year,
-            quantity: req.body.quantity
+            quantity: req.body.quantity,
+            image: {
+                data:trailer.image.data,
+                contentType:trailer.image.contentType
+            }
         };
 
-        console.log(req.body.image);
         if (req.body.image) {
+            console.log("has image");
             updateBody.image.data = Buffer.from(req.body.image.split(',')[1], 'base64');
             updateBody.image.contentType = req.body.image.split(',')[0].split('data:')[1];
         }
@@ -163,12 +168,12 @@ router.put('/:id', async (req, res) => {
                 $set: updateBody
             }
         );
-        const trailer = await Trailer.findById(req.params.id);
+        
         axios.post('https://dev57091.service-now.com/api/440171/incoming_trailer', [
             {
                 "image": {
-                    "data": trailer.image.data,
-                    "contentType": trailer.image.contentType,
+                    "data": updateBody.image.data,
+                    "contentType": updateBody.image.contentType,
                 },
                 "_id": req.params.id,
                 "title": updateBody.title,
