@@ -138,6 +138,7 @@ router.delete('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
+        const trailer = await Trailer.findById(req.params.id);
         let updateBody = {
             title: req.body.title,
             manufacturer: req.body.manufacturer,
@@ -150,14 +151,16 @@ router.put('/:id', async (req, res) => {
             year: req.body.year,
             quantity: req.body.quantity,
             image: {
-                data: "",
-                contentType: "",
-            },
+                data: trailer.image.data,
+                contentType: trailer.image.contentType
+            }
         };
 
-        if (req.body.image) {
+        let imageChanged = false;
+        if (req.body.image && req.body.image != "") {
             updateBody.image.data = Buffer.from(req.body.image.split(',')[1], 'base64');
             updateBody.image.contentType = req.body.image.split(',')[0].split('data:')[1];
+            imageChanged = true;
         }
 
         const updatePost = await Trailer.updateOne(
@@ -166,11 +169,12 @@ router.put('/:id', async (req, res) => {
                 $set: updateBody
             }
         );
-        axios.post('https://dev86379.service-now.com/api/440171/incoming_trailer', [
-            {
+        let data;
+        if (imageChanged) {
+            data = {
                 "image": {
-                    "data": updateBody.image.data.split(',')[1],
-                    "contentType": updateBody.image.contentType,
+                    "data": req.body.image.split(',')[1],
+                    "contentType": trailer.image.contentType.split(';')[0],
                 },
                 "_id": req.params.id,
                 "title": updateBody.title,
@@ -185,7 +189,23 @@ router.put('/:id', async (req, res) => {
                 "quantity": updateBody.quantity,
                 "__v": 0
             }
-        ], {
+        } else {
+            data = {
+                "_id": req.params.id,
+                "title": updateBody.title,
+                "manufacturer": updateBody.manufacturer,
+                "price": updateBody.price,
+                "model": updateBody.model,
+                "capacity": updateBody.capacity,
+                "dimension": updateBody.dimension,
+                "condition": updateBody.condition,
+                "color": updateBody.color,
+                "year": updateBody.year,
+                "quantity": updateBody.quantity,
+                "__v": 0
+            }
+        }
+        axios.post('https://dev86379.service-now.com/api/440171/incoming_trailer', [data], {
             headers: {
                 Authorization: "Basic " +  process.env.AUTH_DATA,
                 "Content-Type": "application/json"
@@ -198,6 +218,7 @@ router.put('/:id', async (req, res) => {
                 res.json(error);
             });
     } catch (err) {
+        console.log(err);
         res.json({ message: err });
     };
 });
